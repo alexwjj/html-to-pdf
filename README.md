@@ -1,14 +1,6 @@
-# cloud-print-node
+# html 转 PDF
 
-cloud print server
-
-## QuickStart
-
-<!-- add docs here for user -->
-
-see [egg docs][egg] for more detail.
-
-### Development
+## node开发环境
 
 ```bash
 $ npm i
@@ -16,18 +8,14 @@ $ npm run dev
 $ open http://localhost:7001/
 ```
 
-### Deploy
+## 测试demo
 
-```bash
-$ npm start
-$ npm stop
-```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-- Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
+浏览器中打开项目根目录下的index.html
 
 
-[egg]: https://eggjs.org
+## TODO
+
+[x] 多线程
+[x] 本地永久存储
+[x] 直接给支持IPP协议打印机发送指令，云打印
+[x] 更多的功能~
