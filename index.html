@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      href="https://cdn.bootcss.com/element-ui/2.4.5/theme-chalk/index.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app" v-html="htmlStr" v-loading="loading"></div>
+  </body>
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.0/axios.min.js"></script>
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <script src="https://cdn.bootcss.com/element-ui/2.4.5/index.js"></script>
+  <script>
+    new Vue({
+      el: "#app",
+      data: function () {
+        return {
+          loading: false,
+          htmlStr:
+            "<div style='text-align:Center;width:21cm;min-height:29.7cm;border:1px solid red'> <h1>刷新下载pdf PDF</h1></div>",
+        };
+      },
+      methods: {
+        async downloadPdf() {
+          this.loading = true;
+          axios({
+            method: "post",
+            url: `http://127.0.0.1:7001/getPdf`,
+            responseType: "arraybuffer",
+            headers: {
+              Accept: "application/pdf",
+            },
+            data: {
+              htmlStr: this.htmlStr,
+              format: "A4",
+            },
+          })
+            .then((res) => {
+              // this.$message.success('打印成功！');
+              console.log(res, "res");
+              const blob = new Blob([res.data], { type: "application/pdf" });
+              // 创建a标签
+              const elink = document.createElement("a");
+              // 文件名
+              elink.download = "测试打印.pdf";
+              // 开始下载
+              elink.style.display = "none";
+              elink.href = URL.createObjectURL(blob);
+              document.body.appendChild(elink);
+              // 触发点击a标签事件
+              elink.click();
+              document.body.removeChild(elink);
+            })
+            .catch(() => {
+              this.$message.warning("打印失败！");
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        },
+      },
+      mounted() {
+        this.downloadPdf();
+      },
+    });
+  </script>
+</html>
