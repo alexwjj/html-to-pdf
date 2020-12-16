@@ -15,10 +15,6 @@ $ open http://localhost:7001/
 $ npm start
 $ npm stop
 ```
-
-## 部署地址
-申请中
-
 ## 获取pdf文件流api
 
 ```
@@ -69,6 +65,17 @@ url: /getPdf,
       },
 ```
 
-## demo
+## 在线demo
 
-根目录下test.html
+[http://118.25.49.69](http://118.25.49.69)
+## demo源码
+
+根目录下index.html
+
+## 教程
+
+写一下从头到尾实现的过程~  有很多坑
+
+掘金地址：
+
+个人博客：[https://alexwjj.github.io/](https://alexwjj.github.io/)
