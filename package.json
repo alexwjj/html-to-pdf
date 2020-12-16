@@ -1,5 +1,5 @@
 {
-  "name": "html-to-pdf",
+  "name": "cloud-print-node",
   "version": "1.0.0",
   "description": "cloud print server",
   "private": true,
@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@sealsystems/ipp": "^2.5.0",
+    "carlo": "^0.9.46",
     "egg": "^2.15.1",
     "egg-cors": "^2.2.3",
     "egg-mysql": "^3.0.0",
@@ -29,8 +30,8 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --workers=1 --daemon --title=egg-server-html-to-pdf",
-    "stop": "egg-scripts stop --title=egg-server-html-to-pdf",
+    "start": "egg-scripts start --workers=1 --daemon --title=egg-server-cloud-print-node",
+    "stop": "egg-scripts stop --title=egg-server-cloud-print-node",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",

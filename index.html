@@ -2,17 +2,127 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <title>Html to PDF</title>
     <link
       href="https://cdn.bootcss.com/element-ui/2.4.5/theme-chalk/index.css"
       rel="stylesheet"
     />
   </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: "Helvetica Neue", Helvetica, "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    }
+    #app {
+      /* text-align: center; */
+      /* min-height: 10cm; */
+      position: relative;
+    }
+    .show-content {
+      width: 21cm;
+      max-height: 29.7cm;
+    }
+    .footer {
+      position: fixed;
+      right: 20px;
+      bottom: 0px;
+      width: 100%;
+      padding: 10px;
+      background-color: white;
+      text-align: right;
+      color: #606266;
+      border-top: 1px solid rgba(116, 128, 148, 0.5);
+    }
+  </style>
   <body>
-    <div id="app" v-html="htmlStr" v-loading="loading"></div>
+    <div id="app" v-loading="loading">
+      <div style="display: flex">
+        <div v-html="htmlStr" class="show-content" contenteditable></div>
+        <div>
+          <object
+            type="application/pdf"
+            :data="pdfUrl"
+            width="250%"
+            height="800px"
+          ></object>
+        </div>
+      </div>
+      <div class="footer">
+        生成尺寸：
+        <el-select
+          v-model="paramsPdf.format"
+          placeholder="请选择生成尺寸"
+          size="mini"
+          style="width: 100px"
+        >
+          <el-option
+            v-for="item in paperList"
+            :key="item"
+            :label="item"
+            :value="item"
+          ></el-option>
+        </el-select>
+        缩放比例：
+        <el-input-number
+          v-model="paramsPdf.scale"
+          :precision="1"
+          :step="0.1"
+          :min="0.1"
+          :max="2"
+          placeholder="默认是1,缩放值必须介于0.1到2之间"
+          size="mini"
+          style="width: 100px"
+          clearable
+        ></el-input-number>
+        <el-checkbox v-model="paramsPdf.landscape">水平模式</el-checkbox>
+        <el-checkbox v-model="paramsPdf.displayPageNumber"
+          >显示分页</el-checkbox
+        >
+        <el-popover placement="top" width="270" v-model="visible">
+          <el-form label-width="50px" inline label-width="right">
+            <el-form-item label="top："
+              ><el-input v-model="paramsPdf.margin.top" size="mini" clearable></el-input
+            ></el-form-item>
+            <el-form-item label="bottom："
+              ><el-input
+                v-model="paramsPdf.margin.bottom"
+                size="mini"
+                clearable
+              ></el-input
+            ></el-form-item>
+            <el-form-item label="left："
+              ><el-input v-model="paramsPdf.margin.left" size="mini" clearable></el-input
+            ></el-form-item>
+            <el-form-item label="right："
+              ><el-input v-model="paramsPdf.margin.right" size="mini" clearable></el-input
+            ></el-form-item>
+          </el-form>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="visible = false">确认</el-button>
+            <el-button size="mini" type="text" @click="resetMargin"
+              >恢复默认值</el-button
+            >
+          </div>
+          <el-button slot="reference" size="mini" plain>页边距设置</el-button>
+        </el-popover>
+        <el-button @click="addPdf(1)" type="warning" :loading="loading"
+        plain>生成单页PDF</el-button
+        >
+        <el-button @click="addPdf(20)" type="success" :loading="loading" plain
+          >生成多页PDF</el-button
+        >
+        <el-button @click="getPdf" type="primary" :loading="loading" plain
+          >生成当前PDF</el-button
+        >
+      </div>
+    </div>
   </body>
   <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.0/axios.min.js"></script>
-  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
   <script src="https://cdn.bootcss.com/element-ui/2.4.5/index.js"></script>
   <script>
     new Vue({
@@ -20,24 +130,204 @@
       data: function () {
         return {
           loading: false,
-          htmlStr:
-            "<div style='text-align:Center;width:21cm;min-height:29.7cm;border:1px solid red'> <h1>刷新下载pdf PDF</h1></div>",
+          visible: false,
+          pdfUrl: "",
+          htmlStr: "",
+          height: "",
+          drugsHtml: "",
+          paperList: ["A1", "A2", "A3", "A4", "A5", "A6", "Letter"],
+          paramsPdf: {
+            htmlStr: "<h1>错误</1>",
+            format: "A4",
+            displayPageNumber: false,
+            landscape: false,
+            scale: 1,
+            margin: {
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+            },
+          },
         };
       },
       methods: {
-        async downloadPdf() {
+        resetMargin() {
+          this.paramsPdf.margin = {
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+          };
+        },
+        getSelfPayHtml(num = 1) {
+          const html = `
+        <div class="prescription-print">
+          <div class="prescription-title">
+            <div>微医集团大前端Html转PDF</div>
+            <div style="margin-top: 10px;color:red">点击即可编辑</div>
+          </div>
+
+          <div class="prescription-base">
+            <div class="bottom-border">
+              <div>姓名：<span class="line-content">亚索</span></div>
+              <div>性别：<span class="line-content">男</span></div>
+              <div>就诊卡号：<span class="line-content">110120114520</span></div>
+              <div>费别：<span class="line-content">自费</span></div>
+            </div>
+          </div>
+          <div class='drugs-content'>
+            <div class="drugs-item drugs-item-title">
+              <div style="flex:4">项目</div>
+              <div style="flex-grow:1.5">规格</div>
+              <div>数量</div>
+              <div>单价</div>
+              <div>金额</div>
+            </div>
+            <div class="drugs-item">
+              <div style="flex:4">五酯滴丸</div>
+              <div style="flex-grow:1.5">50丸*9袋</div>
+              <div>2</div>
+              <div>28.76</div>
+              <div>57.52</div>
+            </div>
+            ${this.getDrugHtml(num)}
+          </div>
+          <div class="prescription-footer">
+            <div class="footer-between" style="border-bottom: 1px solid rgba(116,128,148,1)">
+              <div></div>
+              <div>合计金额：￥57.52</div>
+            </div>
+            <div class="footer-between">
+              <div>收银员：吴俊杰</div>
+              <div>日期：2020-12-16</div>
+            </div>
+          </div>
+        </div>
+        `;
+          const style = `
+      .prescription-print {
+        margin: 0 auto;
+        position: relative;
+        padding: 60px 40px;
+        font-size: 16px;
+        box-sizing: border-box;
+        min-height: 600px;
+        color: #34384b;
+      }
+
+      .prescription-title {
+        text-align: center;
+        margin-bottom: 16px;
+        font-size: 24px;
+        // font-weight: 550
+      }
+
+      .prescription-base span {
+        flex: 1;
+        height: 26px;
+        line-height: 26px;
+        margin-top: 40px;
+      }
+
+      .prescription-base .bottom-border {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .drugs-content {
+        min-height: 500px;
+        margin-top: 40px;
+      }
+      .drugs-item {
+        display: flex;
+        width: 100%;
+        border-bottom: 1px solid rgba(116,128,148,0.6);
+        // font-weight: 400;
+      }
+      .drugs-item-title {
+        // font-weight: 550;
+        border-bottom: 1px solid rgba(116,128,148,1);
+        padding:0
+      }
+
+      .drugs-item div {
+        flex:1;
+        padding: 10px;
+        padding-left: 0px;
+      }
+
+      .prescription-footer {
+        width: 100%;
+        margin-top: 10px;
+      }
+      .line-content {
+        display: inline-block;
+        padding: 0 5px;
+        min-width: 40px;
+        border-bottom: 1px solid rgba(116,128,148,1);
+
+      }
+      .footer-between{
+        width: 100%;
+        display: flex;
+        padding: 8px;
+        padding-left: 0px;
+        justify-content: space-between;
+      }
+        `;
+          return `<html><head><style>${style}</style></head><body>${html}</body></html>`;
+        },
+        addPdf(num) {
+          this.htmlStr = this.getSelfPayHtml(num);
+          setTimeout(() => {
+            this.getPdf();
+          }, 0);
+        },
+        getDrugHtml(num = 1) {
+          const htmlStr = `
+            <div class="drugs-item">
+              <div style="flex:4">阿莫西林</div>
+              <div style="flex-grow:1.5">1包</div>
+              <div>20</div>
+              <div>22.22</div>
+              <div>25.22</div>
+            </div>
+          `;
+          let htmlArr = [];
+          for (var i = 0; i < num; i++) {
+            htmlArr.push(htmlStr);
+          }
+          return htmlArr.join("");
+        },
+        async getPdf() {
+          // let html = "";
+          // for (let i = 0; i < 15; i++) {
+          //   html += this.htmlStr;
+          // }
+          const html = document.getElementsByClassName("show-content")[0]
+            .innerHTML;
+          // console.log(html);
+          this.paramsPdf.htmlStr = html;
+          this.paramsPdf.scale = Number(this.paramsPdf.scale);
+          if (
+            typeof this.paramsPdf.scale !== "number" ||
+            this.paramsPdf.scale > 2 ||
+            this.paramsPdf.scale < 0.1
+          ) {
+            this.$message.error("请输入正确的缩放比例 0.1 ~ 2");
+            return;
+          }
           this.loading = true;
           axios({
             method: "post",
-            url: `http://127.0.0.1:7001/getPdf`,
+            url: `http://118.25.49.69:7001/getPdf`,
             responseType: "arraybuffer",
             headers: {
               Accept: "application/pdf",
             },
-            data: {
-              htmlStr: this.htmlStr,
-              format: "A4",
-            },
+            data: this.paramsPdf,
           })
             .then((res) => {
               // this.$message.success('打印成功！');
@@ -49,14 +339,15 @@
               elink.download = "测试打印.pdf";
               // 开始下载
               elink.style.display = "none";
-              elink.href = URL.createObjectURL(blob);
-              document.body.appendChild(elink);
-              // 触发点击a标签事件
-              elink.click();
-              document.body.removeChild(elink);
+              this.pdfUrl = URL.createObjectURL(blob);
+              // elink.href = URL.createObjectURL(blob);
+              // document.body.appendChild(elink);
+              // // 触发点击a标签事件
+              // elink.click();
+              // document.body.removeChild(elink);
             })
-            .catch(() => {
-              this.$message.warning("打印失败！");
+            .catch((err) => {
+              this.$message.warning(err);
             })
             .finally(() => {
               this.loading = false;
@@ -64,7 +355,15 @@
         },
       },
       mounted() {
-        this.downloadPdf();
+        // let contentStr = "";
+        // for(let i = 1; i < 6; i++) {
+        //   contentStr += `<h${i}>PDF Content H${i}</h${i}>`
+        // }
+        // this.htmlStr = `<div style='text-align:Center;'>${contentStr}</div>`
+        this.htmlStr = this.getSelfPayHtml();
+        setTimeout(() => {
+          this.getPdf();
+        }, 0);
       },
     });
   </script>

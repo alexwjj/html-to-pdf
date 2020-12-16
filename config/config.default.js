@@ -33,7 +33,7 @@ module.exports = appInfo => {
     json(err, ctx) {
       ctx.body = { err };
       ctx.status = 500;
-    }
+    },
   },
 
   config.security = {
@@ -44,8 +44,8 @@ module.exports = appInfo => {
 
   // 处理跨域
   config.cors = {
-    origin: '*'
-  }
+    origin: '*',
+  };
 
   // config.mysql = {
   //   // 单数据库信息配置
@@ -86,7 +86,7 @@ module.exports = appInfo => {
     app: true,
     // 是否加载到 agent 上，默认关闭
     agent: false,
-  }
+  };
 
   return {
     ...config,

@@ -1,3 +1,5 @@
+'use strict';
+
 const Service = require('egg').Service;
 // const getBrowser = require('../util/getBrowser');
 const getPagePool = require('../util/getPagePool');
@@ -31,33 +33,18 @@ class RenderService extends Service {
         format: params.format || 'A4',
         printBackground: true,
         landscape: params.landscape || false,
-        displayHeaderFooter: params.displayHeaderFooter || false,
+        margin: params.margin || {},
+        scale: params.scale || 1,
+        displayHeaderFooter: params.displayPageNumber || false,
         // path: 'hm.pdf',
-        footerTemplate: `
-            <div style="font-size: 20px; padding-top: 5px; text-align: center; width: 100%;">
-              <span>${params.footerStr}</span> - <span class="pageNumber"></span>
-            </div>
-          `,
-        headerTemplate: `
-          <div style="font-size: 20px; padding-top: 5px; text-align: center; width: 100%;">
-            <span>${params.headerStr}</span> - <span class="pageNumber"></span>
-          </div>
-        `,
+        footerTemplate: `<div style="width:100%;text-align:center;padding:10px 0;font-size:14px">
+          <span class="pageNumber"> </span> / <span class="totalPages"></span>
+          </div>`,
+        // headerTemplate: params.headerStr,
       };
 
-      // 解决现场打印机四周空白问题
-      config.margin = {
-        bottom: 15,
-        top: 15,
-        left: 15,
-        right: 15,
-      };
-
-      if (params.displayHeaderFooter) {
-        config.margin = {
-          bottom: 70,
-          top: 70,
-        };
+      if (params.displayPageNumber) {
+        config.margin.bottom = 70;
       }
 
       buffer = await page.pdf(config);

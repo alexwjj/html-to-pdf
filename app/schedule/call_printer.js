@@ -1,3 +1,4 @@
+'use strict';
 const Subscription = require('egg').Subscription;
 const getPrintTaskQueue = require('../util/getPrintTaskQueue');
 const { printInterval } = require('../../config/printerConfig');

@@ -111,34 +111,24 @@ class HomeController extends Controller {
         required: true,
         allowEmpty: false,
       },
+      //  页面空白白边配置，默认是都为0
+      margin: {
+        type: 'object',
+        required: false,
+      },
       // 纸张
       format: {
         type: 'string',
         required: false,
       },
-      // Letter: 8.5in x 11in
-      // Legal: 8.5in x 14in
-      // Tabloid: 11in x 17in
-      // Ledger: 17in x 11in
-      // A0: 33.1in x 46.8in
-      // A1: 23.4in x 33.1in
-      // A2: 16.54in x 23.4in
-      // A3: 11.7in x 16.54in
-      // A4: 8.27in x 11.7in
-      // A5: 5.83in x 8.27in
-      // A6: 4.13in x 5.83in
+      //  页面渲染的缩放。默认是1。缩放值必须介于0.1到2之间
+      scale: {
+        type: 'number',
+        required: false,
+      },
 
-      // 页头页尾
-      headerStr: {
-        type: 'string',
-        required: false,
-      },
-      footerStr: {
-        type: 'string',
-        required: false,
-      },
-      // 是否显示页头页尾
-      displayHeaderFooter: {
+      // 是否显示页码 eg：1/4
+      displayPageNumber: {
         type: 'boolean',
         required: false,
       },
