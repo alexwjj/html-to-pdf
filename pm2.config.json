@@ -1,20 +1,12 @@
 {
   "apps": [
     {
-      "name": "cloud-print-node",
-      "args": "start",
+      "name": "html-to-pdf",
+      "script": "npm",
+      "args": "run start",
       "log_date_format": "YYYY-MM-DD HH:mm:ss",
-      "exec_mode": "cluster",
-      "instances": 4,
-      "instance_var": "INSTANCE_ID",
-      "min_uptime": "60s",
-      "max_memory_restart": "500M",
-      "env": {
-        "NODE_ENV": "production"
-      },
-      "env_production": {
-        "NODE_ENV": "production"
-      }
+      "exec_mode": "fork",
+      "max_memory_restart": "500M"
     }
   ]
 }
