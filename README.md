@@ -1,4 +1,20 @@
 # html-to-pdf
+
+## 在线demo
+
+[http://118.25.49.69](http://118.25.49.69)
+## demo源码
+
+根目录下index.html
+
+## 教程
+
+写一下从头到尾实现的过程~  有很多坑
+
+掘金地址：[Egg + Puppeteer 实现Html转PDF](https://juejin.cn/post/6907500437134376974)
+
+个人博客：[https://alexwjj.github.io/](https://alexwjj.github.io/)
+
 ### Development
 
 ```bash
@@ -62,18 +78,3 @@ url: /getPdf,
         required: false,
       },
 ```
-
-## 在线demo
-
-[http://118.25.49.69](http://118.25.49.69)
-## demo源码
-
-根目录下index.html
-
-## 教程
-
-写一下从头到尾实现的过程~  有很多坑
-
-掘金地址：[Egg + Puppeteer 实现Html转PDF](https://juejin.cn/post/6907500437134376974)
-
-个人博客：[https://alexwjj.github.io/](https://alexwjj.github.io/)
