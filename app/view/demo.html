@@ -25,7 +25,7 @@
       align-items: center;
       width: 300px;
       height: 200px;
-      color: blue
+      color: blue;
     }
   </style>
   <body>
@@ -34,8 +34,11 @@
       <el-button @click="print">全局打印</el-button>
       <el-button @click="onInnerHtmlPrint">局部打印（innerHtml）</el-button>
       <el-button @click="onIframePrint">局部打印(iframe)</el-button>
+      <el-button @click="onCanvasPrint">局部打印(canvas)</el-button>
+      <img id="img-canvas" width="300" height="300" v-show="imgBase64"/>
     </div>
   </body>
+  <script src="https://cdn.staticfile.org/html2canvas/0.4.0/html2canvas.min.js"></script>
   <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.0/axios.min.js"></script>
   <script src="https://cdn.bootcss.com/element-ui/2.4.5/index.js"></script>
@@ -47,6 +50,7 @@
           loading: false,
           test: "1111",
           diyHtml: "<h1>俊劫的打印分享</h1>",
+          imgBase64: ""
         };
       },
       methods: {
@@ -74,6 +78,30 @@
           iframe.contentDocument.close();
           iframe.contentWindow.print();
           document.body.removeChild(iframe);
+        },
+        onCanvasPrint() {
+          var target = document.getElementById("content");
+          target.style.background = "#FFFFFF";
+
+          html2canvas(target, {
+            onrendered: function (canvas) {
+              var contentWidth = canvas.width;
+              var contentHeight = canvas.height;
+
+              //一页pdf显示html页面生成的canvas高度;
+              var pageHeight = (contentWidth / 592.28) * 841.89;
+              //未生成pdf的html页面高度
+              var leftHeight = contentHeight;
+              //页面偏移
+              var position = 0;
+              //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+              var imgWidth = 595.28;
+              var imgHeight = (592.28 / contentWidth) * contentHeight;
+
+              var imgBase64 = canvas.toDataURL("image/jpeg", 1.0);
+              document.getElementById("img-canvas").src = imgBase64;
+            },
+          });
         },
       },
       mounted() {},

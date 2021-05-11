@@ -50,6 +50,7 @@
         </div>
       </div>
       <div class="footer">
+        <el-button @click="printShare">打印分享</el-button>
         生成尺寸：
         <el-select
           v-model="paramsPdf.format"
@@ -255,6 +256,9 @@
         };
       },
       methods: {
+        printShare() {
+          window.open('/demo')
+        },
         handleCloseApi() {
           this.apiDialog = false;
         },
