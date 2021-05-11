@@ -27,7 +27,9 @@ class RenderService extends Service {
       // await page.goto('https://github.com/puppeteer/puppeteer/blob/v2.0.0/docs/api.md#pagepdfoptions', {waitUntil: 'networkidle2'});
       const data = params.htmlStr;
       await page.setContent(data, { waitUntil: 'networkidle2', timeout: 10000 });
-      await page.emulateMedia('screen');
+      if (page.emulateMedia) {
+        await page.emulateMedia('screen');
+      }
 
       const config = {
         format: params.format || 'A4',
@@ -49,7 +51,12 @@ class RenderService extends Service {
 
       buffer = await page.pdf(config);
     } catch (err) {
-      throw err;
+      const errMsg = {
+        code: '1',
+        errMsg: err,
+      };
+      return errMsg;
+      // throw err;
     } finally {
       if (decoratePage) {
         decoratePage.inUse = false;

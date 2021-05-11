@@ -14,6 +14,7 @@
     "egg-mysql": "^3.0.0",
     "egg-scripts": "^2.11.0",
     "egg-validate": "^2.0.2",
+    "egg-view-nunjucks": "^2.2.0",
     "puppeteer": "^2.0.0",
     "uuid": "^3.3.3"
   },
@@ -30,8 +31,8 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --workers=1 --daemon --title=egg-server-html-to-pdf",
-    "stop": "egg-scripts stop --title=egg-server-html-to-pdf",
+    "start": "egg-scripts start --workers=1 --daemon --title=egg-server-cloud-print-node",
+    "stop": "egg-scripts stop --title=egg-server-cloud-print-node",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",

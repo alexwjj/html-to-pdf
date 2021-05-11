@@ -12,7 +12,7 @@ class HomeController extends Controller {
     const {
       ctx,
     } = this;
-    ctx.body = 'hi, egg';
+    await ctx.render('index.html');
   }
 
   async print() {
@@ -33,6 +33,18 @@ class HomeController extends Controller {
         type: 'string',
         required: false,
       },
+      // Letter: 8.5in x 11in
+      // Legal: 8.5in x 14in
+      // Tabloid: 11in x 17in
+      // Ledger: 17in x 11in
+      // A0: 33.1in x 46.8in
+      // A1: 23.4in x 33.1in
+      // A2: 16.54in x 23.4in
+      // A3: 11.7in x 16.54in
+      // A4: 8.27in x 11.7in
+      // A5: 5.83in x 8.27in
+      // A6: 4.13in x 5.83in
+
       // 页头页尾
       headerStr: {
         type: 'string',
@@ -132,11 +144,16 @@ class HomeController extends Controller {
     let status = 200;
     try {
       const pdf = await ctx.service.render.rend(ctx.request.body, '');
-      status = 200;
-      body = pdf;
+      if (!pdf.code) {
+        status = 200;
+        body = pdf;
+      } else {
+        status = 406;
+        body = { code: pdf.code, errMsg: `${pdf.errMsg}` };
+      }
     } catch (err) {
-      status = 401;
-      body = err;
+      status = 408;
+      body = { errMsg: '未知的系统错误' };
     }
     // 设置响应内容和响应状态码
     ctx.set({
