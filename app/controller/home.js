@@ -14,6 +14,12 @@ class HomeController extends Controller {
     } = this;
     await ctx.render('index.html');
   }
+  async demo() {
+    const {
+      ctx,
+    } = this;
+    await ctx.render('demo.html');
+  }
 
   async print() {
     const {

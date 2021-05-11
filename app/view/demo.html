@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>web打印demo</title>
+    <link
+      href="https://cdn.bootcss.com/element-ui/2.4.5/theme-chalk/index.css"
+      rel="stylesheet"
+    />
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: "Helvetica Neue", Helvetica, "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    }
+    #app {
+    }
+    #content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 300px;
+      height: 200px;
+      color: blue
+    }
+  </style>
+  <body>
+    <div id="app" v-loading="loading">
+      <div v-html="diyHtml" id="content"></div>
+      <el-button @click="print">全局打印</el-button>
+      <el-button @click="onInnerHtmlPrint">局部打印（innerHtml）</el-button>
+      <el-button @click="onIframePrint">局部打印(iframe)</el-button>
+    </div>
+  </body>
+  <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.0/axios.min.js"></script>
+  <script src="https://cdn.bootcss.com/element-ui/2.4.5/index.js"></script>
+  <script>
+    new Vue({
+      el: "#app",
+      data: function () {
+        return {
+          loading: false,
+          test: "1111",
+          diyHtml: "<h1>俊劫的打印分享</h1>",
+        };
+      },
+      methods: {
+        onInnerHtmlPrint() {
+          // 缓存页面内容
+          const bodyHtml = window.document.body.innerHTML;
+          // 获取要打印的dom
+          const printContentHtml = document.getElementById("content").innerHTML;
+          // 替换页面内容
+          window.document.body.innerHTML = printContentHtml;
+          // 全局打印
+          window.print();
+          // 还原页面内容
+          window.document.body.innerHTML = bodyHtml;
+        },
+        onIframePrint() {
+          const printContentHtml = document.getElementById("content").innerHTML;
+          const iframe = document.createElement("iframe");
+          iframe.setAttribute(
+            "style",
+            "position:absolute;width:0px;height:0px;left:-500px;top:-500px;"
+          );
+          document.body.appendChild(iframe);
+          iframe.contentDocument.write(printContentHtml);
+          iframe.contentDocument.close();
+          iframe.contentWindow.print();
+          document.body.removeChild(iframe);
+        },
+      },
+      mounted() {},
+    });
+  </script>
+</html>
