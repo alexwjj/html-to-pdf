@@ -9,10 +9,10 @@
     />
   </head>
   <style>
-    * {
+    {# * {
       margin: 0;
       padding: 0;
-    }
+    } #}
     body {
       font-family: "Helvetica Neue", Helvetica, "PingFang SC",
         "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
@@ -21,8 +21,10 @@
       position: relative;
     }
     .show-content {
-      width: 21cm;
-      max-height: 29.7cm;
+      width: 16cm;
+      max-height: calc(100% - 61px);
+      display: flex;
+      justify-content: center;
     }
     .footer {
       position: fixed;
@@ -40,17 +42,17 @@
     <div id="app" v-loading="loading">
       <div style="display: flex">
         <div v-html="htmlStr" class="show-content" contenteditable></div>
-        <div>
+        <div style="margin-left: 20px">
           <object
             type="application/pdf"
             :data="pdfUrl"
-            width="250%"
-            height="800px"
+            width="220%"
+            height="650px"
           ></object>
         </div>
       </div>
       <div class="footer">
-        <el-button @click="printShare">打印分享</el-button>
+        {# <el-button @click="printShare">打印分享</el-button> #}
         生成尺寸：
         <el-select
           v-model="paramsPdf.format"
@@ -136,15 +138,36 @@
           plain
           >自定义Html</el-button
         >
-        <el-button @click="addPdf(1)" type="warning" :loading="loading" plain
-          >生成单页PDF</el-button
-        >
-        <el-button @click="addPdf(20)" type="success" :loading="loading" plain
-          >生成多页PDF</el-button
-        >
-        <el-button @click="getPdf(false)" type="primary" :loading="loading" plain
-          >生成当前PDF</el-button
-        >
+        <el-dropdown @command="onClickPdf">
+          <el-button type="primary">
+            生成PDF<i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="current">生成当前PDF</el-dropdown-item>
+            <el-dropdown-item command="1">生成单页PDF</el-dropdown-item>
+            <el-dropdown-item command="20">生成多页PDF</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        {#
+        <el-button
+          @click="addPdf(1)"
+          type="warning"
+          :loading="loading"
+          plain
+        ></el-button>
+        <el-button
+          @click="addPdf(20)"
+          type="success"
+          :loading="loading"
+          plain
+        ></el-button>
+        <el-button
+          @click="getPdf(false)"
+          type="primary"
+          :loading="loading"
+          plain
+        ></el-button>
+        #}
       </div>
       <el-dialog
         title="请输入自定义html"
@@ -257,7 +280,15 @@
       },
       methods: {
         printShare() {
-          window.open('/demo')
+          window.open("/demo");
+        },
+        onClickPdf(command) {
+          console.log("command",command)
+          if(command == 'current') {
+            this.getPdf(false)
+          } else {
+            this.addPdf(command)
+          }
         },
         handleCloseApi() {
           this.apiDialog = false;
@@ -291,36 +322,40 @@
           <div class="prescription-base">
             <div class="bottom-border">
               <div>姓名：<span class="line-content">亚索</span></div>
-              <div>性别：<span class="line-content">男</span></div>
-              <div>就诊卡号：<span class="line-content">110120114520</span></div>
-              <div>费别：<span class="line-content">自费</span></div>
+              <div>昵称：<span class="line-content">疾风剑豪</span></div>
+              <div>被动：<span class="line-content">浪客之道</span></div>
+              <div>绝招：<span class="line-content">狂风绝息斩</span></div>
             </div>
           </div>
           <div class='drugs-content'>
             <div class="drugs-item drugs-item-title">
-              <div style="flex:4">项目</div>
-              <div style="flex-grow:1.5">规格</div>
-              <div>数量</div>
-              <div>单价</div>
-              <div>金额</div>
+              <div style="flex:4">技能</div>
+              <div style="flex-grow:1.5">按键</div>
+              <div>冷却</div>
+              <div>伤害</div>
             </div>
             <div class="drugs-item">
-              <div style="flex:4">五酯滴丸</div>
-              <div style="flex-grow:1.5">50丸*9袋</div>
-              <div>2</div>
-              <div>28.76</div>
-              <div>57.52</div>
+              <div style="flex:4">斩钢闪</div>
+              <div style="flex-grow:1.5">Q</div>
+              <div>1s</div>
+              <div>20/40/70</div>
+            </div>
+            <div class="drugs-item">
+              <div style="flex:4">风之障壁</div>
+              <div style="flex-grow:1.5">W</div>
+              <div>30s</div>
+              <div>0</div>
             </div>
             ${this.getDrugHtml(num)}
           </div>
           <div class="prescription-footer">
             <div class="footer-between" style="border-bottom: 1px solid rgba(116,128,148,1)">
               <div></div>
-              <div>合计金额：￥57.52</div>
+              <div>累计死亡：9999+</div>
             </div>
             <div class="footer-between">
-              <div>收银员：吴俊杰</div>
-              <div>日期：2020-12-16</div>
+              <div>操作者：吴俊杰</div>
+              <div>日期：2021-05-13</div>
             </div>
           </div>
         </div>
@@ -329,11 +364,13 @@
       .prescription-print {
         margin: 0 auto;
         position: relative;
-        padding: 60px 40px;
+        padding: 30px 20px;
         font-size: 16px;
         box-sizing: border-box;
-        min-height: 600px;
+        min-height: 400px;
+        overflow: auto;
         color: #34384b;
+        border: 1px solid rgba(116,128,148,0.5)
       }
 
       .prescription-title {
@@ -357,7 +394,7 @@
       }
 
       .drugs-content {
-        min-height: 500px;
+        min-height: 300px;
         margin-top: 40px;
       }
       .drugs-item {
@@ -408,11 +445,16 @@
         getDrugHtml(num = 1) {
           const htmlStr = `
             <div class="drugs-item">
-              <div style="flex:4">阿莫西林</div>
-              <div style="flex-grow:1.5">1包</div>
-              <div>20</div>
-              <div>22.22</div>
-              <div>25.22</div>
+              <div style="flex:4">踏前斩</div>
+              <div style="flex-grow:1.5">E</div>
+              <div>0</div>
+              <div>0</div>
+            </div>
+            <div class="drugs-item">
+              <div style="flex:4">狂风绝息斩</div>
+              <div style="flex-grow:1.5">R</div>
+              <div>100</div>
+              <div>60/80/90</div>
             </div>
           `;
           let htmlArr = [];
