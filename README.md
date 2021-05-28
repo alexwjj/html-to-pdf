@@ -1,15 +1,13 @@
 # html-to-pdf
 
-## 在线demo
-
-[http://118.25.49.69](http://118.25.49.69)
+## 预览
+![image.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9607e896eb44411e8c335df98762586d~tplv-k3u1fbpfcp-watermark.image)
 ## demo源码
 
-根目录下index.html
-
+root/app/view/index.html
 ## 教程
 
-写一下从头到尾实现的过程~  有很多坑
+写了一下从头到尾实现的过程~  有很多坑
 
 掘金地址：[Egg + Puppeteer 实现Html转PDF](https://juejin.cn/post/6907500437134376974)
 
@@ -20,7 +18,6 @@
 ```bash
 $ npm i
 $ npm run dev
-$ open http://localhost:7001/
 ```
 
 ### Deploy

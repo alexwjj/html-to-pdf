@@ -28,7 +28,8 @@
       color: blue;
     }
     .set-page{
-      page-break-after: always
+      {# page-break-before: always; #}
+      {# page-break-after: always #}
     }
     @media print {
       body {
@@ -36,10 +37,8 @@
       }
     }
     @page {
-      // 去除页眉页脚
-      margin: 0;
-      // 设置纸张、打印方向
-      {# size: A3 landscape; #}
+      {# margin: 10px;
+      size: A3 landscape; #}
     }
   </style>
   <body>
